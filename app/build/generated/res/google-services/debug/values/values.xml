@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">48916875973-ijdrjlm5t848av27hai670mojfj525qt.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://able-brace-247217.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">48916875973</string>
+    <string name="google_api_key" translatable="false">AIzaSyDfAuLTkF-tkRHh0pzKm8U0Hjz5fcGRs4Q</string>
+    <string name="google_app_id" translatable="false">1:48916875973:android:1cf98ea33df00fb5e1beac</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDfAuLTkF-tkRHh0pzKm8U0Hjz5fcGRs4Q</string>
+    <string name="google_storage_bucket" translatable="false">able-brace-247217.appspot.com</string>
+    <string name="project_id" translatable="false">able-brace-247217</string>
+</resources>
