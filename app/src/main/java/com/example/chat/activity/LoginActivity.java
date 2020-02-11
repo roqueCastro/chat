@@ -62,7 +62,11 @@ public class LoginActivity extends AppCompatActivity {
                                         startActivity(intent);
                                         finish();
                                     }else {
-                                        Toast.makeText(getApplicationContext(), "Autenticacion erronea.......!!!!!!", Toast.LENGTH_SHORT).show();
+                                        if (task.getException().getMessage().equals("There is no user record corresponding to this identifier. The user may have been deleted.")){
+                                            Toast.makeText(getApplicationContext(), "No existe usuario..!", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Toast.makeText(getApplicationContext(), "Password failds..!", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     //
                                 }
