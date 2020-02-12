@@ -4,6 +4,7 @@ package com.example.chat.fragments;
 import android.app.ProgressDialog;
 import android.app.usage.StorageStats;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.chat.R;
+import com.example.chat.activity.Main2Activity;
 import com.example.chat.model.User;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,6 +57,8 @@ public class ProfileFragment extends Fragment {
     private Uri imageUri;
     private StorageTask uploadTask;
 
+    private Main2Activity mActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,13 +77,19 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 /**/
+                if (mActivity == null) {
+                    return;
+                }
+
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
 
                 if (user.getImageURL().equals("default")){
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 }else {
+
                     Glide.with(getContext()).load(user.getImageURL()).into(profile_image);
+
                 }
                 /**/
             }
@@ -98,6 +108,20 @@ public class ProfileFragment extends Fragment {
         });
 
         return  view;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mActivity = (Main2Activity) getActivity();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
     }
 
     private void openImage() {

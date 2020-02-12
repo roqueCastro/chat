@@ -1,6 +1,9 @@
 package com.example.chat.activity;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -30,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -39,6 +43,7 @@ public class Main2Activity extends AppCompatActivity {
     TextView username;
 
     FirebaseUser firebaseUser;
+    Context context;
     DatabaseReference reference;
 
     @Override
@@ -54,6 +59,8 @@ public class Main2Activity extends AppCompatActivity {
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.textViewusername);
 
+        context = Main2Activity.this;
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
@@ -68,7 +75,10 @@ public class Main2Activity extends AppCompatActivity {
                 if (user.getImageURL().equals("default")){
                     profile_image.setImageResource(R.mipmap.ic_launcher_round);
                 }else{
-                    Glide.with(Main2Activity.this).load(user.getImageURL()).into(profile_image);
+                    if (!Main2Activity.this.isFinishing()) {
+                        Glide.with(context).load(user.getImageURL()).into(profile_image);
+                    }
+
                 }
             }
 
@@ -93,6 +103,7 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
+    /*MENU OPTIONS*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -106,8 +117,10 @@ public class Main2Activity extends AppCompatActivity {
             case R.id.logout:
 
                 FirebaseAuth.getInstance().signOut();
+//                startActivity(new Intent(Main2Activity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 startActivity(new Intent(Main2Activity.this, MainActivity.class));
                 finish();
+
 
                 break;
         }
@@ -115,6 +128,7 @@ public class Main2Activity extends AppCompatActivity {
         return false;
     }
 
+    /*CLASE ADAPTADOR VIEWPAGER*/
     class  ViewPagerAdapter extends FragmentPagerAdapter {
 
         private ArrayList<Fragment> fragments;
@@ -146,5 +160,30 @@ public class Main2Activity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return titles.get(position);
         }
+    }
+
+    /*STATUD*/
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+
+        reference.updateChildren(hashMap);
+    }
+
+    /*APP EN EJECUCCION*/
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    /*APP EN PAUSA O FUERA DE ELLA*/
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }
