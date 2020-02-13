@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MessageActivity"></activity>
+        <activity android:name=".activity.ResetActivity" android:parentActivityName=".activity.LoginActivity"></activity>
+        <activity android:name=".activity.MessageActivity" />
         <activity
             android:name=".activity.LoginActivity"
             android:parentActivityName=".activity.MainActivity" />

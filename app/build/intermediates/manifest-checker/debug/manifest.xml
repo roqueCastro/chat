@@ -32,6 +32,9 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.chat.activity.ResetActivity"
+            android:parentActivityName="com.example.chat.activity.LoginActivity" />
         <activity android:name="com.example.chat.activity.MessageActivity" />
         <activity
             android:name="com.example.chat.activity.LoginActivity"

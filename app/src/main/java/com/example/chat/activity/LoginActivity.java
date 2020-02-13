@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chat.R;
@@ -25,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
 
+    TextView forgot_password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,14 @@ public class LoginActivity extends AppCompatActivity {
         email = findViewById(R.id.lemail);
         password = findViewById(R.id.lpassword);
         btn_login = findViewById(R.id.btn_login);
+        forgot_password = findViewById(R.id.forgot_password);
+
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, ResetActivity.class));
+            }
+        });
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -32,7 +32,7 @@
         android:visibility="gone"
         android:src="@mipmap/ic_launcher"
         android:layout_below="@id/username_ui"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="-15dp"
         android:layout_toRightOf="@id/profile_image_ui"
         android:layout_toEndOf="@id/profile_image_ui"
@@ -51,6 +51,19 @@
         android:layout_marginLeft="-15dp"
         android:layout_toRightOf="@id/profile_image_ui"
         android:layout_toEndOf="@id/profile_image_ui"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username"
+        android:layout_toRightOf="@id/profile_image_ui"
+        android:layout_marginTop="25dp"
+        android:paddingTop="10dp"
+        android:id="@+id/last_msg"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="20dp"
+        android:maxLines="1"
         />
 
 </RelativeLayout>
