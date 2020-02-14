@@ -1,4 +1,4 @@
-#Wed Feb 12 20:49:24 COT 2020
+#Fri Feb 14 15:57:01 COT 2020
 base.0=C\:\\Users\\alien\\AndroidStudioProjects\\chat\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\9
 path.0=classes.dex
 renamed.0=classes.dex

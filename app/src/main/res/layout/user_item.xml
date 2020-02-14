@@ -62,7 +62,7 @@
         android:paddingTop="10dp"
         android:id="@+id/last_msg"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
         android:maxLines="1"
         />
 

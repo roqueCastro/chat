@@ -1,5 +1,6 @@
 package com.example.chat.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -56,11 +57,20 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //
+
+                final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+                pd.setMessage("Cargando..");
+                pd.show();
+                btn_login.setVisibility(View.GONE);
+
                 String txt_email = email.getText().toString();
                 String txt_password = password.getText().toString();
 
                 if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)){
                     Toast.makeText(getApplicationContext(), "Debe llenarse todos los campos correspondientes.", Toast.LENGTH_SHORT).show();
+
+                    pd.dismiss();
+                    btn_login.setVisibility(View.VISIBLE);
                 }else{
                     auth.signInWithEmailAndPassword(txt_email, txt_password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -68,6 +78,10 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onComplete( Task<AuthResult> task) {
                                     //
                                     if (task.isSuccessful()){
+
+                                        pd.dismiss();
+                                        btn_login.setVisibility(View.VISIBLE);
+
                                         Intent intent = new Intent(LoginActivity.this, Main2Activity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
@@ -75,8 +89,14 @@ public class LoginActivity extends AppCompatActivity {
                                     }else {
                                         if (task.getException().getMessage().equals("There is no user record corresponding to this identifier. The user may have been deleted.")){
                                             Toast.makeText(getApplicationContext(), "No existe usuario..!", Toast.LENGTH_SHORT).show();
+
+                                            pd.dismiss();
+                                            btn_login.setVisibility(View.VISIBLE);
                                         }else{
                                             Toast.makeText(getApplicationContext(), "Password failds..!", Toast.LENGTH_SHORT).show();
+
+                                            pd.dismiss();
+                                            btn_login.setVisibility(View.VISIBLE);
                                         }
                                     }
                                     //

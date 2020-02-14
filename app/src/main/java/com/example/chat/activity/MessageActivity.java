@@ -1,6 +1,8 @@
 package com.example.chat.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.annotation.FontRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +18,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.chat.Adapter.MessageAdapter;
+import com.example.chat.Notifications.Client;
+import com.example.chat.Notifications.Data;
+import com.example.chat.Notifications.MyResponse;
+import com.example.chat.Notifications.Sender;
+import com.example.chat.Notifications.Token;
 import com.example.chat.R;
+import com.example.chat.fragments.APIService;
 import com.example.chat.model.Chat;
 import com.example.chat.model.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -32,6 +41,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -53,6 +65,11 @@ public class MessageActivity extends AppCompatActivity {
 
     ValueEventListener seenListener;
 
+    APIService apiService;
+    Boolean notify = false;
+
+    String userid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,13 +88,16 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
         profile_image = findViewById(R.id.profile_image_m);
         username = findViewById(R.id.textViewusername_m);
         message = findViewById(R.id.text_send);
         send = findViewById(R.id.btn_imageview_send);
 
         intent = getIntent();
-        final String userid = intent.getStringExtra("userid");
+        userid = intent.getStringExtra("userid");
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
@@ -85,6 +105,8 @@ public class MessageActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                notify = true;
                 String msj = message.getText().toString();
                 if (!msj.equals("")){
                     sendMessage(firebaseUser.getUid(), userid, msj);
@@ -131,6 +153,12 @@ public class MessageActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         seenMessage(userid);
+    }
+
+    private void currentUser(String userid){
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
     }
 
     private void seenMessage(final String userid){
@@ -194,6 +222,75 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        final String msg = message;
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                User user = dataSnapshot.getValue(User.class);
+
+                if (notify){
+                    sendNotificationRecivier(reciver, user.getUsername(),msg);
+                }
+
+
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void sendNotificationRecivier(String reciver, final String username, final String msg) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = tokens.orderByKey().equalTo(reciver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                /**/
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username + ": " + msg, "New message", userid);
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                    /**/
+
+                                    if (response.code() == 200){
+                                        if (response.body().success ==1){
+                                            Toast.makeText(getApplicationContext(), "Failds Noti", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    /**/
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                }
+                            });
+
+                }
+
+                /**/
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /*LEER MENSAJES*/
@@ -255,6 +352,7 @@ public class MessageActivity extends AppCompatActivity {
         super.onPause();
         reference.removeEventListener(seenListener);
         status("offline");
+        currentUser("none");
     }
 
 }

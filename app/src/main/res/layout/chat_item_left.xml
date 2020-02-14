@@ -20,6 +20,7 @@
         android:layout_toRightOf="@id/profile_image_"
         android:layout_marginLeft="5dp"
         android:textSize="18sp"
+        android:textColor="@android:color/black"
         android:text="Hellow"
         android:padding="8dp"
         />

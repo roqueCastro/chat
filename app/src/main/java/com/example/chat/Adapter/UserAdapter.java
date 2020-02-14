@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.chat.R;
@@ -31,6 +32,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private Context mContext;
     private List<User> mUsers;
     private Boolean ischat;
+
 
     String theLastMessage;
 
@@ -125,13 +127,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
 
-                    if (chat.getReciver().equals(firebaseUser.getUid())
-                            && chat.getSender().equals(userid)
-                            || chat.getReciver().equals(userid)
-                            && chat.getSender().equals(firebaseUser.getUid())
-                    ){
-                        theLastMessage = chat.getMessage();
+                    if (firebaseUser == null){
+                        theLastMessage = "default";
+                    }else {
+                        if (chat.getReciver().equals(firebaseUser.getUid())
+                                && chat.getSender().equals(userid)
+                                || chat.getReciver().equals(userid)
+                                && chat.getSender().equals(firebaseUser.getUid())
+                        ){
+                            theLastMessage = chat.getMessage();
+                        }
                     }
+
                 }
 
                 switch (theLastMessage){
