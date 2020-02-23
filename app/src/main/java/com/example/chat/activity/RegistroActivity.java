@@ -1,6 +1,8 @@
 package com.example.chat.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.chat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,6 +74,13 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     private void register(final String username, String email, String password){
+
+        //Cargando
+        final ProgressDialog pd = new ProgressDialog(RegistroActivity.this);
+        pd.setMessage("Registrando..");
+        pd.show();
+        btn_register.setVisibility(View.GONE);
+
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -93,6 +103,10 @@ public class RegistroActivity extends AppCompatActivity {
                                 public void onComplete( Task<Void> task) {
                                     //
                                     if (task.isSuccessful()){
+
+                                        pd.dismiss();
+                                        btn_register.setVisibility(View.VISIBLE);
+
                                         Intent intent = new Intent(RegistroActivity.this, Main2Activity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
@@ -102,9 +116,20 @@ public class RegistroActivity extends AppCompatActivity {
                             });
                         }else {
                             Toast.makeText(RegistroActivity.this, "No se pudo registrar.", Toast.LENGTH_SHORT).show();
+
+                            pd.dismiss();
+                            btn_register.setVisibility(View.VISIBLE);
                         }
                         //
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(RegistroActivity.this, "ERROR: \n" + e.toString(), Toast.LENGTH_SHORT).show();
+
+                pd.dismiss();
+                btn_register.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

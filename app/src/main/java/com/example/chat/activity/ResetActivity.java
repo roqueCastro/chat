@@ -1,5 +1,6 @@
 package com.example.chat.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,13 @@ public class ResetActivity extends AppCompatActivity {
                 if (email.equals("")){
                     Toast.makeText(getApplicationContext(), "Required fields!", Toast.LENGTH_SHORT).show();
                 }else{
+
+                    //Cargando
+                    final ProgressDialog pd = new ProgressDialog(ResetActivity.this);
+                    pd.setMessage("Autenticando..");
+                    pd.show();
+                    btn_reset.setVisibility(View.GONE);
+
                     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -52,10 +60,19 @@ public class ResetActivity extends AppCompatActivity {
 
                             if (task.isSuccessful()){
                                 Toast.makeText(getApplicationContext(), "Please check your Email", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(ResetActivity.this, LoginActivity.class));
+
+                                Intent intent = new Intent(ResetActivity.this, LoginActivity.class);
+                                startActivity(intent);
+
+                                pd.dismiss();
+                                btn_reset.setVisibility(View.VISIBLE);
+
                             }else {
                                 String error = task.getException().getMessage();
                                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+
+                                pd.dismiss();
+                                btn_reset.setVisibility(View.VISIBLE);
                             }
 
                             /**/

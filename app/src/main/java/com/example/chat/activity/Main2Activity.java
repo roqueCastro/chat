@@ -100,11 +100,16 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 /**/
+
                 ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
                 int unread = 0;
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
                     Chat chat = snapshot.getValue(Chat.class);
-                    if (chat.getSender().equals(firebaseUser.getUid()) && !chat.getIsseen()){
+
+                    if (chat.getReciver().equals(firebaseUser.getUid()) && !chat.getIsseen()){
                         unread++;
                     }
                 }
@@ -122,6 +127,7 @@ public class Main2Activity extends AppCompatActivity {
                 viewPager.setAdapter(viewPagerAdapter);
 
                 tabLayout.setupWithViewPager(viewPager);
+
                 /**/
             }
 

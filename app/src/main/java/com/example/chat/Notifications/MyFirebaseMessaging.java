@@ -38,7 +38,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         if (firebaseUser != null && sented.equals(firebaseUser.getUid())){
 
-            //Notificacion si es salida
+            //Notificacion si esta por fuera del chat
             if (!currentuser.equals(userid)){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                     senderOreoNotification(remoteMessage);

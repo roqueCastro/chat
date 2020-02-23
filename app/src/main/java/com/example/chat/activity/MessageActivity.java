@@ -189,9 +189,10 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    /*ENVIO DE MENSAJE*/
+    /*ENVIO DE MENSAJE AND NOTIFICATION*/
     private  void  sendMessage(String sender, final String reciver, String message){
 
+        /*ENVIAR MENSAJE ******************/
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -210,9 +211,11 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 /**/
+
                 if (!dataSnapshot.exists()){
                     chatRef.child("id").setValue(reciver);
                 }
+
                 /**/
             }
 
@@ -222,20 +225,26 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+
+        /*NOTIFICACION*******************/
+
         final String msg = message;
+
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                /**/
 
                 User user = dataSnapshot.getValue(User.class);
 
-                if (notify){
-                    sendNotificationRecivier(reciver, user.getUsername(),msg);
+                if (notify) {
+                    sendNotificationRecivier(reciver, user.getUsername(), msg);
                 }
-
-
                 notify = false;
+
+                /**/
             }
 
             @Override
@@ -255,8 +264,9 @@ public class MessageActivity extends AppCompatActivity {
                 /**/
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username + ": " + msg, "New message", userid);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, username + ": " + msg, "", userid);
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -268,7 +278,8 @@ public class MessageActivity extends AppCompatActivity {
 
                                     if (response.code() == 200){
                                         if (response.body().success ==1){
-                                            Toast.makeText(getApplicationContext(), "Failds Noti", Toast.LENGTH_SHORT).show();
+                                            //Notificacion no es enviada al otro usuario
+//                                            Toast.makeText(getApplicationContext(), "Failds Noti", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
@@ -343,6 +354,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         status("online");
+        currentUser(userid);
     }
 
     /*APP EN PAUSA O FUERA DE ELLA*/
